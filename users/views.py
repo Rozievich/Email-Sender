@@ -1,4 +1,5 @@
 from rest_framework.views import APIView
+from rest_framework.generics import CreateAPIView
 from .tasks import send_to_gmail
 from config import settings
 from django.core.cache import cache
@@ -13,7 +14,8 @@ from .serializers import UserSignUpSerializer, UserSignInSerializer, ProfileSeri
 from .models import User
 
 
-class EmailSignUp(APIView):
+class EmailSignUp(CreateAPIView):
+    serializer_class = EmailVerySerializer
     def post(self, request, *args, **kwargs):
         serializer = EmailVerySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -27,7 +29,9 @@ class EmailSignUp(APIView):
         return Response({"message": 'Code is expired or invalid'})
 
 
-class UserAPIView(APIView):
+class UserAPIView(CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSignUpSerializer
     def post(self, request, *args, **kwargs):
         serializer = UserSignUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
