@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from .tokens import get_tokens_for_user
 from .oauth2 import oauth2_sign_in
-from .serializers import UserSignUpSerializer, UserSignInSerializer, ProfileSerializer, EmailVerySerializer
+from .serializers import UserSignUpSerializer, UserSignInSerializer, ProfileSerializer, EmailVerySerializer, OauthSerializer
 from .models import User
 
 
@@ -51,12 +51,15 @@ class UserSignInAPIView(APIView):
         user = User.objects.get(email=serializer.data['email'])
         return Response({'status': True, 'email': serializer.data['email'], 'token': get_tokens_for_user(user)})
 
-class Oauth2(APIView):
+
+class Oauth2(CreateAPIView):
+    serializer_class = OauthSerializer
     def post(self, request, *args, **kwargs):
         data = request.data
         if token:= data.get('token'):
             return Response(oauth2_sign_in(token))
         raise ValidationError('token is missing or invalid')
+
 
 class ProfileView(RetrieveUpdateDestroyAPIView):
     serializer_class = ProfileSerializer

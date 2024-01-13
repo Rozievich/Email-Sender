@@ -8,6 +8,8 @@ from .models import User
 class EmailVerySerializer(Serializer):
     code = CharField(max_length=5)
 
+class OauthSerializer(Serializer):
+    token = CharField(max_length=255)
 
 class UserSignUpSerializer(Serializer):
     email = EmailField(max_length=128)
